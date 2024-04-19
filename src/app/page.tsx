@@ -53,7 +53,7 @@ type Action<T extends ActionType, P = undefined> = P extends undefined
   : { type: T; payload: P };
 
 type Actions =
-  | Action<ActionType.SUBMIT_MESSAGE>
+  | Action<ActionType.SUBMIT_MESSAGE, string>
   | Action<ActionType.SET_ERROR, Error>
   | Action<ActionType.SET_AI_MESSAGE, string>
   | Action<ActionType.SET_DRAFT_MESSAGE, string>;
@@ -64,7 +64,7 @@ export default function Home() {
       case ActionType.SUBMIT_MESSAGE:
         state.isLoading = true;
         state.messages.push({
-          text: state.draftMessage,
+          text: action.payload,
           isUser: true,
         });
         state.draftMessage = "";
@@ -72,14 +72,22 @@ export default function Home() {
       case ActionType.SET_DRAFT_MESSAGE:
         state.draftMessage = action.payload;
         return;
+      case ActionType.SET_AI_MESSAGE:
+        state.isLoading = false;
+        state.messages.push({
+          text: action.payload,
+          isUser: false,
+        });
+        return;
       default:
         return;
     }
   }, initialState);
   const handleSendMessage = async (nextMessage: string) => {
     try {
-      dispatch({ type: ActionType.SET_DRAFT_MESSAGE, payload: nextMessage });
+      dispatch({ type: ActionType.SUBMIT_MESSAGE, payload: nextMessage });
       const nextAIMessage = await sendMessage(nextMessage);
+      console.log("next msg", nextAIMessage);
       dispatch({
         type: ActionType.SET_AI_MESSAGE,
         payload: nextAIMessage,
@@ -163,9 +171,15 @@ export default function Home() {
         <Spacer height={8} />
         <ChatInput
           className={`w-[480px] ${state.messages.length ? "mt-auto" : ""}`}
-          onChange={() => {}}
+          onChange={(nextMessage) => {
+            dispatch({
+              type: ActionType.SET_DRAFT_MESSAGE,
+              payload: nextMessage,
+            });
+          }}
+          value={state.draftMessage}
           onSend={() => {
-            handleSendMessage("");
+            handleSendMessage(state.draftMessage);
           }}
           placeholder="Ask me about Justin..."
           submitDisabled={state.isLoading}
@@ -180,7 +194,7 @@ export default function Home() {
                 onClick={() => {
                   handleSendMessage(question);
                 }}
-                key={question}
+                key={question + index}
                 className={`hover:opacity-80 body1 semibold cursor-pointer w-fill p-4 rounded border-2 border-sand bg-light-brown ${
                   index === 0 ? "" : "mt-4"
                 }`}
