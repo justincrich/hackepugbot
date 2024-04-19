@@ -9,13 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@langchain/anthropic": "^0.1.16",
+    "@langchain/community": "^0.0.50",
+    "@langchain/core": "^0.1.58",
+    "@types/cheerio": "^0.22.35",
+    "@types/pdf-parse": "^1.1.4",
+    "cheerio": "^1.0.0-rc.12",
     "immer": "^10.0.4",
+    "jsdom": "^24.0.0",
+    "langchain": "^0.1.34",
     "next": "14.2.2",
+    "pdf-parse": "^1.1.1",
     "react": "^18",
     "react-dom": "^18",
     "use-immer": "^0.9.0"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

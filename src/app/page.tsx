@@ -29,16 +29,7 @@ const initialState: State = {
   isLoading: false,
   draftMessage: "",
   error: null,
-  messages: [
-    {
-      text: "l;aksdjfl;askdj 'akls;djf;laskdjf ;lksdf;laskdjf ;kljsdf;laksdjf",
-      isUser: true,
-    },
-    {
-      text: "l;aksdjfl;askdj 'akls;djf;laskdjf ;lksdf;laskdjf ;kljsdf;laksdjf",
-      isUser: false,
-    },
-  ],
+  messages: [],
 };
 
 enum ActionType {
@@ -86,7 +77,7 @@ export default function Home() {
   const handleSendMessage = async (nextMessage: string) => {
     try {
       dispatch({ type: ActionType.SUBMIT_MESSAGE, payload: nextMessage });
-      const nextAIMessage = await sendMessage(nextMessage);
+      const nextAIMessage = await sendMessage(nextMessage, state.messages);
       console.log("next msg", nextAIMessage);
       dispatch({
         type: ActionType.SET_AI_MESSAGE,
