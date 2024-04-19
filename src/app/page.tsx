@@ -29,7 +29,32 @@ const initialState: State = {
   isLoading: false,
   draftMessage: "",
   error: null,
-  messages: [],
+  messages: [
+    {
+      text: "What is Justin's greatest accomplishment",
+      isUser: true,
+    },
+    {
+      text: "\nBuilding DoorDash's first retail-specific inventory management system used by ~30% of their merchants to generate over 100,000 product updates. This system enabled over 100,000 merchants to migrate menu data by providing data mapping tooling, resulting in a 12% increase in sales for DoorDash.\n",
+      isUser: false,
+    },
+    {
+      text: "What is Formulist?",
+      isUser: true,
+    },
+    {
+      text: '\n- Formulist is an AI strategy and consulting company based in San Francisco, CA that Justin Rich founded in September 2023 and currently works at as the Technical Founder\n- At Formulist, he has consulted with companies on automating business flows using large language models (LLMs) like OpenAI and Claud\n- He wrote backend services using Node.js, GraphQL, and Langchain to create standardized LLM services\n- He created LLM prompt quality control systems and processes to ensure output consistency \n- He piloted the "Lame To Fame" tool that used OpenAI and AI voice cloning (PlayHT) to clone Jerry Seinfeld\'s voice to narrate vacation photos, as a proof of concept of what generative AI can do\n',
+      isUser: false,
+    },
+    {
+      text: "What was the first question I asked?",
+      isUser: true,
+    },
+    {
+      text: "The first question you asked was \"What is Justin's greatest accomplishment\". Based on the information provided in Justin's resume and LinkedIn profile, his greatest accomplishment appears to be building DoorDash's first retail-specific inventory management system used by ~30% of their merchants to generate over 100,000 product updates. This system enabled over 100,000 merchants to migrate menu data by providing data mapping tooling, resulting in a 12% increase in sales for DoorDash.",
+      isUser: false,
+    },
+  ],
 };
 
 enum ActionType {
@@ -143,7 +168,7 @@ export default function Home() {
           professional background.`}
           </p>
         </div>
-        <div className="w-full flex grow shrink-0 flex-col items-center justify-start overflow-auto">
+        <div className="w-full flex grow shrink flex-col items-center justify-start overflow-auto">
           {state.messages.map((message, index) => {
             const BOT_STYLES = `bg-sand self-end text-dark`;
             const USER_STYLES = `bg-light-brown text-lite self-start`;

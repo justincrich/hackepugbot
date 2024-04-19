@@ -22,6 +22,11 @@ export const ChatInput = ({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyUp={(e) => {
+          if (e.key === "Enter" && onSend && !submitDisabled) {
+            onSend();
+          }
+        }}
         className="body1 placeholder:text-cream text-white w-full bg-transparent outline-none"
       />
       <Button
