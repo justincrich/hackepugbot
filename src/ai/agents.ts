@@ -36,7 +36,7 @@ export const createAgent = async (): Promise<AgentExecutor> => {
     }
   );
   const agent = await createXmlAgent({
-    llm: claude3Model,
+    llm: claudeInstantModel,
     tools,
     prompt,
   });
