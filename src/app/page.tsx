@@ -1,11 +1,14 @@
 "use client";
 import React from "react";
+import { v4 as uuid } from "uuid";
 import { useImmerReducer } from "use-immer";
 import { Spacer } from "@/components/Spacer";
 import Image from "next/image";
 import { ChatInput } from "@/components/ChatInput";
-import { sendMessage } from "./actions";
+
 import { Button } from "@/components/Button";
+import { streamingFetch } from "@/streamFetch";
+import { Loading } from "@/components/Loading";
 
 const baseQuestions = [
   "Where did Justin go to school? 🎓",
@@ -16,6 +19,7 @@ const baseQuestions = [
 type MessageType = {
   text: string;
   isUser: boolean;
+  id: string;
 };
 
 type State = {
@@ -34,8 +38,10 @@ const initialState: State = {
 
 enum ActionType {
   SET_ERROR = "SET_ERROR",
+  SET_IS_LOADING = "SET_IS_LOADING",
   SET_AI_MESSAGE = "SET_AI_MESSAGE",
-  SUBMIT_MESSAGE = "SUBMIT_MESSAGE",
+  SUBMIT_USER_MESSAGE = "SUBMIT_USER_MESSAGE",
+  UPDATE_AI_MESSAGE = "UPDATE_AI_MESSAGE",
   SET_DRAFT_MESSAGE = "SET_DRAFT_MESSAGE",
 }
 
@@ -44,45 +50,85 @@ type Action<T extends ActionType, P = undefined> = P extends undefined
   : { type: T; payload: P };
 
 type Actions =
-  | Action<ActionType.SUBMIT_MESSAGE, string>
   | Action<ActionType.SET_ERROR, Error>
-  | Action<ActionType.SET_AI_MESSAGE, string>
-  | Action<ActionType.SET_DRAFT_MESSAGE, string>;
+  | Action<ActionType.SUBMIT_USER_MESSAGE, string>
+  | Action<ActionType.SET_DRAFT_MESSAGE, string>
+  | Action<ActionType.SET_IS_LOADING, boolean>
+  | Action<ActionType.UPDATE_AI_MESSAGE, { text: string; id: string }>;
 
 export default function Home() {
   const [state, dispatch] = useImmerReducer((state: State, action: Actions) => {
     switch (action.type) {
-      case ActionType.SUBMIT_MESSAGE:
-        state.isLoading = true;
-        state.messages.push({
-          text: action.payload,
-          isUser: true,
-        });
-        state.draftMessage = "";
-        return;
       case ActionType.SET_DRAFT_MESSAGE:
         state.draftMessage = action.payload;
         return;
-      case ActionType.SET_AI_MESSAGE:
-        state.isLoading = false;
+      case ActionType.SUBMIT_USER_MESSAGE:
         state.messages.push({
+          id: uuid(),
           text: action.payload,
-          isUser: false,
+          isUser: true,
         });
+        break;
+      case ActionType.UPDATE_AI_MESSAGE:
+        let messageIndex = state.messages.findIndex(
+          (message) => message.id === action.payload.id
+        );
+        if (messageIndex === -1) messageIndex = state.messages.length;
+        state.messages[messageIndex] = {
+          id: action.payload.id,
+          isUser: false,
+          text: action.payload.text,
+        };
+        break;
+      case ActionType.SET_IS_LOADING:
+        state.isLoading = action.payload;
         return;
       default:
         return;
     }
   }, initialState);
   const handleSendMessage = async (nextMessage: string) => {
+    const nextUserMessage = {
+      id: "unknown",
+      text: nextMessage,
+      isUser: true,
+    };
+
+    dispatch({
+      type: ActionType.SUBMIT_USER_MESSAGE,
+      payload: nextMessage,
+    });
     try {
-      dispatch({ type: ActionType.SUBMIT_MESSAGE, payload: nextMessage });
-      const nextAIMessage = await sendMessage(nextMessage, state.messages);
-      console.log("next msg", nextAIMessage);
-      dispatch({
-        type: ActionType.SET_AI_MESSAGE,
-        payload: nextAIMessage,
+      const it = streamingFetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [...state.messages, nextUserMessage],
+        }),
       });
+      const aiMessageId = uuid();
+      dispatch({
+        type: ActionType.UPDATE_AI_MESSAGE,
+        payload: {
+          text: "...",
+          id: aiMessageId,
+        },
+      });
+      for await (let value of it) {
+        try {
+          dispatch({
+            type: ActionType.UPDATE_AI_MESSAGE,
+            payload: {
+              text: value,
+              id: aiMessageId,
+            },
+          });
+        } catch (e: any) {
+          console.warn(e.message, e.stack);
+        }
+      }
     } catch (e) {
       const error = e as Error;
       dispatch({ type: ActionType.SET_ERROR, payload: error });
@@ -149,12 +195,20 @@ export default function Home() {
             const USER_STYLES = `bg-light-brown text-lite self-start`;
             return (
               <div
-                className={`flex flex-col w-[400px] rounded p-3 text-wrap ${
+                className={`flex shrink flex-col w-[400px] rounded p-3 text-wrap ${
                   message.isUser ? USER_STYLES : BOT_STYLES
                 } ${index === 0 ? "" : "mt-6"}`}
                 key={message.text}
               >
-                {message.text}
+                {message.text === "..." ? (
+                  <Loading size={Loading.Sizes.Small} />
+                ) : (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: message.text.replace(/\n/g, "<br/>"),
+                    }}
+                  />
+                )}
               </div>
             );
           })}

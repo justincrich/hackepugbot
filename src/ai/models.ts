@@ -7,6 +7,7 @@ export const claude3Model = new ChatAnthropic({
   clientOptions: {
     apiKey: ANTHROPIC_API_KEY,
   },
+  streaming: true,
 });
 
 export const claudeInstantModel = new ChatAnthropic({
