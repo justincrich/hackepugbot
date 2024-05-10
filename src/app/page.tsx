@@ -3,10 +3,11 @@ import React from "react";
 import { v4 as uuid } from "uuid";
 import { Interweave } from "interweave";
 import { useImmerReducer } from "use-immer";
+import debounce from "lodash/debounce";
 import { Spacer } from "@/components/Spacer";
 import Image from "next/image";
 import { ChatInput } from "@/components/ChatInput";
-
+import { streamingFetch } from "@/streamFetch";
 import { Button } from "@/components/Button";
 import { Loading } from "@/components/Loading";
 import { useFakeTextStream } from "@/hooks/useFakeTextStream";
@@ -118,18 +119,19 @@ export default function Home() {
       scrollBodyRef.current.scrollTop = scrollBodyRef.current.scrollHeight;
     }
   });
-  const [_, startFakeTextStream] = useFakeTextStream({
-    lettersPerSecond: 20,
-    onFragment: (fragment, isComplete) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedChangeHandler = React.useCallback(
+    debounce((value: string, isComplete: boolean) => {
       dispatch({
         type: ActionType.UPDATE_AI_MESSAGE,
         payload: {
-          text: fragment,
+          text: value,
           isComplete,
         },
       });
-    },
-  });
+    }, 300),
+    []
+  );
   const handleSendMessage = async (nextMessage: string) => {
     const nextUserMessage = {
       id: "unknown",
@@ -149,7 +151,7 @@ export default function Home() {
           id: aiMessageId,
         },
       });
-      const response = await fetch("/api/chat", {
+      const it = streamingFetch("/api/chatStream", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,8 +160,18 @@ export default function Home() {
           messages: [...state.messages, nextUserMessage],
         }),
       });
-      const message = await response.text();
-      startFakeTextStream(message);
+      let latestValue = "";
+      for await (let value of it) {
+        latestValue = value;
+        debouncedChangeHandler(latestValue, false);
+      }
+      dispatch({
+        type: ActionType.UPDATE_AI_MESSAGE,
+        payload: {
+          text: latestValue,
+          isComplete: true,
+        },
+      });
     } catch (e) {
       const error = e as Error;
       dispatch({ type: ActionType.SET_ERROR, payload: error });
