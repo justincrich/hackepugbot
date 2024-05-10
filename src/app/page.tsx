@@ -198,12 +198,14 @@ export default function Home() {
         </div>
       ) : null}
       <div
-        className={`p-24 flex flex-col items-center h-full ${
-          state.messages.length ? "w-full max-w-[800px] min-w-[480px]" : ""
+        className={`p-12 w-full max-w-[480px] min-w-[350px] flex flex-col items-center h-full ${
+          state.messages.length ? "w-full max-w-[800px] min-w-[350px]" : ""
         }`}
       >
         <div
-          className={`max-w-[480px] ${state.messages.length ? "hidden" : ""}`}
+          className={`w-full max-w-[480px] ${
+            state.messages.length ? "hidden" : ""
+          }`}
         >
           <Image
             src={"/hero.png"}
@@ -222,7 +224,7 @@ export default function Home() {
         </div>
         <div
           ref={scrollBodyRef}
-          className="w-full flex grow shrink flex-col items-center justify-start overflow-auto"
+          className="w-full flex flex-col items-center justify-start overflow-auto"
         >
           {state.messages.map((message, index) => {
             const BOT_STYLES = `bg-sand self-end text-dark`;
@@ -243,9 +245,8 @@ export default function Home() {
             );
           })}
         </div>
-        <Spacer height={8} />
         <ChatInput
-          className={`w-[480px] ${state.messages.length ? "mt-auto" : ""}`}
+          className={`my-8 w-full ${state.messages.length ? "mt-auto" : ""}`}
           onChange={(nextMessage) => {
             dispatch({
               type: ActionType.SET_DRAFT_MESSAGE,
@@ -262,7 +263,11 @@ export default function Home() {
             state.isAIGenerating || state.draftMessage.length === 0
           }
         />
-        <div className={`w-[480px] ${state.messages.length ? "hidden" : ""}`}>
+        <div
+          className={`w-full max-w-[480px] ${
+            state.messages.length ? "hidden" : ""
+          }`}
+        >
           <Spacer height={8} />
           <p className="title2">You can ask me things like:</p>
           <Spacer height={8} />
@@ -273,7 +278,7 @@ export default function Home() {
                   handleSendMessage(question);
                 }}
                 key={question + index}
-                className={`hover:opacity-80 body1 semibold cursor-pointer w-fill p-4 rounded border-2 border-sand bg-light-brown ${
+                className={`w-fullhover:opacity-80 body1 semibold cursor-pointer w-fill p-4 rounded border-2 border-sand bg-light-brown ${
                   index === 0 ? "" : "mt-4"
                 }`}
               >
