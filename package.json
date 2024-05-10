@@ -14,6 +14,7 @@
     "@langchain/core": "^0.1.58",
     "@types/cheerio": "^0.22.35",
     "@types/pdf-parse": "^1.1.4",
+    "axios": "^1.6.8",
     "cheerio": "^1.0.0-rc.12",
     "immer": "^10.0.4",
     "jsdom": "^24.0.0",
