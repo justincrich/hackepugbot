@@ -183,7 +183,7 @@ export default function Home() {
               }}
               size={Button.Size.Small}
             >
-              Resume 📄
+              Resume
             </Button>
             <Button
               size={Button.Size.Small}
@@ -192,7 +192,7 @@ export default function Home() {
                 window.open("mailto:justin@hackerpug.com", "mail");
               }}
             >
-              Contact 📫
+              Contact
             </Button>
           </div>
         </div>
@@ -231,7 +231,7 @@ export default function Home() {
             const USER_STYLES = `bg-light-brown text-lite self-start`;
             return (
               <div
-                className={`flex shrink flex-col w-[400px] rounded p-3 text-wrap ${
+                className={`flex shrink flex-col w-full max-w-[400px] rounded p-3 text-wrap ${
                   message.isUser ? USER_STYLES : BOT_STYLES
                 } ${index === 0 ? "" : "mt-6"}`}
                 key={message.text}
