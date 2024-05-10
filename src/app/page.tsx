@@ -51,6 +51,7 @@ enum ActionType {
   SUBMIT_USER_MESSAGE = "SUBMIT_USER_MESSAGE",
   UPDATE_AI_MESSAGE = "UPDATE_AI_MESSAGE",
   SET_DRAFT_MESSAGE = "SET_DRAFT_MESSAGE",
+  CLEAR_MESSAGES = "CLEAR_MESSAGES",
 }
 
 type Action<T extends ActionType, P = undefined> = P extends undefined
@@ -69,9 +70,12 @@ type Actions =
         text: string;
       }
     >
-  | Action<ActionType.INIT_AI_MESSAGE, { id: string }>;
+  | Action<ActionType.INIT_AI_MESSAGE, { id: string }>
+  | Action<ActionType.CLEAR_MESSAGES>;
 
 export default function Home() {
+  const readerRef =
+    React.useRef<null | ReadableStreamDefaultReader<Uint8Array>>(null);
   const scrollBodyRef = React.useRef<HTMLDivElement>(null);
   const [state, dispatch] = useImmerReducer((state: State, action: Actions) => {
     switch (action.type) {
@@ -109,6 +113,12 @@ export default function Home() {
         break;
       case ActionType.SET_IS_LOADING:
         state.isLoading = action.payload;
+        return;
+      case ActionType.CLEAR_MESSAGES:
+        state.messages = [];
+        state.isLoading = false;
+        state.isAIGenerating = false;
+        state.activeMessageId = "";
         return;
       default:
         return;
@@ -162,7 +172,9 @@ export default function Home() {
       });
       let latestValue = "";
       for await (let value of it) {
-        latestValue = value;
+        const [text, reader] = value;
+        readerRef.current = reader;
+        latestValue = text;
         debouncedChangeHandler(latestValue, false);
       }
       dispatch({
@@ -180,7 +192,13 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center">
       {state.messages.length ? (
-        <div className="flex flex-row w-full px-8 py-4 title2 justify-between">
+        <div
+          onClick={() => {
+            readerRef.current?.cancel();
+            dispatch({ type: ActionType.CLEAR_MESSAGES });
+          }}
+          className="flex flex-row w-full px-8 py-4 title2 justify-between cursor-pointer"
+        >
           {"<HackerPug/>"}
           <div className="flex flex-row gap-3">
             <Button

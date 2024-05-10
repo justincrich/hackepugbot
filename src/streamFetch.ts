@@ -1,7 +1,7 @@
 export async function* streamingFetch(
   input: RequestInfo | URL,
   init?: RequestInit
-): AsyncIterable<string> {
+): AsyncIterable<[string, ReadableStreamDefaultReader<Uint8Array>]> {
   const response = await fetch(input, init);
   if (response.status !== 200 || !response.body)
     throw new Error(`Request failed with status ${response.status}`);
@@ -13,7 +13,7 @@ export async function* streamingFetch(
     if (done) break;
 
     try {
-      yield decoder.decode(value);
+      yield [decoder.decode(value), reader];
     } catch (e: any) {
       console.warn(e.message);
     }
