@@ -2,7 +2,7 @@ import { ANTHROPIC_API_KEY } from "@/env";
 import { ChatAnthropic } from "@langchain/anthropic";
 
 export const claude3Model = new ChatAnthropic({
-  modelName: "claude-3-opus-20240229",
+  modelName: "claude-3-haiku-20240307",
   temperature: 0.1,
   clientOptions: {
     apiKey: ANTHROPIC_API_KEY,

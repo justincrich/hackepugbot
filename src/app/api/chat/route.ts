@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAgent } from "@/ai/agents";
 import { MessageType } from "../../../types";
 
+export const config = {
+  maxDuration: 60,
+};
+
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const messages: MessageType[] = body?.messages ?? [];
