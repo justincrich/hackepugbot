@@ -8,7 +8,6 @@ import Image from "next/image";
 import { ChatInput } from "@/components/ChatInput";
 
 import { Button } from "@/components/Button";
-import { streamingFetch } from "@/streamFetch";
 import { Loading } from "@/components/Loading";
 import { useFakeTextStream } from "@/hooks/useFakeTextStream";
 import { useHasChanged } from "@/hooks/useHasChanged";
