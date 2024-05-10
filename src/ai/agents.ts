@@ -2,7 +2,12 @@ import { AgentExecutor, createXmlAgent } from "langchain/agents";
 import { DynamicTool, Tool } from "@langchain/core/tools";
 import type { ChatPromptTemplate } from "@langchain/core/prompts";
 import { pull } from "langchain/hub";
-import { claude2Model, claude3OpusModel, claudeInstantModel } from "./models";
+import {
+  claude2Model,
+  claude3OpusModel,
+  claude3SonnetModelStreamable,
+  claudeInstantModel,
+} from "./models";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import path from "path";
 import { LANGCHAIN_HUB_API_KEY } from "@/env";
@@ -36,7 +41,7 @@ export const createAgent = async (): Promise<AgentExecutor> => {
     }
   );
   const agent = await createXmlAgent({
-    llm: claude3OpusModel,
+    llm: claude3SonnetModelStreamable,
     tools,
     prompt,
   });
