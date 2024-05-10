@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { v4 as uuid } from "uuid";
+import { Interweave } from "interweave";
 import { useImmerReducer } from "use-immer";
 import { Spacer } from "@/components/Spacer";
 import Image from "next/image";
@@ -9,6 +10,8 @@ import { ChatInput } from "@/components/ChatInput";
 import { Button } from "@/components/Button";
 import { streamingFetch } from "@/streamFetch";
 import { Loading } from "@/components/Loading";
+import { useFakeTextStream } from "@/hooks/useFakeTextStream";
+import { useHasChanged } from "@/hooks/useHasChanged";
 
 const baseQuestions = [
   "Where did Justin go to school? 🎓",
@@ -26,12 +29,16 @@ type State = {
   isLoading: boolean;
   draftMessage: string;
   messages: MessageType[];
+  activeMessageId: string;
+  isAIGenerating: boolean;
   error: Error | null;
 };
 
 const initialState: State = {
   isLoading: false,
   draftMessage: "",
+  activeMessageId: "",
+  isAIGenerating: false,
   error: null,
   messages: [],
 };
@@ -39,6 +46,7 @@ const initialState: State = {
 enum ActionType {
   SET_ERROR = "SET_ERROR",
   SET_IS_LOADING = "SET_IS_LOADING",
+  INIT_AI_MESSAGE = "INIT_AI_MESSAGE",
   SET_AI_MESSAGE = "SET_AI_MESSAGE",
   SUBMIT_USER_MESSAGE = "SUBMIT_USER_MESSAGE",
   UPDATE_AI_MESSAGE = "UPDATE_AI_MESSAGE",
@@ -54,9 +62,17 @@ type Actions =
   | Action<ActionType.SUBMIT_USER_MESSAGE, string>
   | Action<ActionType.SET_DRAFT_MESSAGE, string>
   | Action<ActionType.SET_IS_LOADING, boolean>
-  | Action<ActionType.UPDATE_AI_MESSAGE, { text: string; id: string }>;
+  | Action<
+      ActionType.UPDATE_AI_MESSAGE,
+      {
+        isComplete: boolean;
+        text: string;
+      }
+    >
+  | Action<ActionType.INIT_AI_MESSAGE, { id: string }>;
 
 export default function Home() {
+  const scrollBodyRef = React.useRef<HTMLDivElement>(null);
   const [state, dispatch] = useImmerReducer((state: State, action: Actions) => {
     switch (action.type) {
       case ActionType.SET_DRAFT_MESSAGE:
@@ -68,17 +84,28 @@ export default function Home() {
           text: action.payload,
           isUser: true,
         });
+        state.draftMessage = "";
+        break;
+      case ActionType.INIT_AI_MESSAGE:
+        state.activeMessageId = action.payload.id;
+        state.messages.push({
+          id: action.payload.id,
+          text: "...",
+          isUser: false,
+        });
+        state.isAIGenerating = true;
         break;
       case ActionType.UPDATE_AI_MESSAGE:
         let messageIndex = state.messages.findIndex(
-          (message) => message.id === action.payload.id
+          (message) => message.id === state.activeMessageId
         );
         if (messageIndex === -1) messageIndex = state.messages.length;
         state.messages[messageIndex] = {
-          id: action.payload.id,
+          id: state.activeMessageId,
           isUser: false,
           text: action.payload.text,
         };
+        state.isAIGenerating = !action.payload.isComplete;
         break;
       case ActionType.SET_IS_LOADING:
         state.isLoading = action.payload;
@@ -87,6 +114,23 @@ export default function Home() {
         return;
     }
   }, initialState);
+  useHasChanged(state.messages, () => {
+    if (scrollBodyRef.current) {
+      scrollBodyRef.current.scrollTop = scrollBodyRef.current.scrollHeight;
+    }
+  });
+  const [_, startFakeTextStream] = useFakeTextStream({
+    lettersPerSecond: 20,
+    onFragment: (fragment, isComplete) => {
+      dispatch({
+        type: ActionType.UPDATE_AI_MESSAGE,
+        payload: {
+          text: fragment,
+          isComplete,
+        },
+      });
+    },
+  });
   const handleSendMessage = async (nextMessage: string) => {
     const nextUserMessage = {
       id: "unknown",
@@ -99,7 +143,14 @@ export default function Home() {
       payload: nextMessage,
     });
     try {
-      const it = streamingFetch("/api/chat", {
+      const aiMessageId = uuid();
+      dispatch({
+        type: ActionType.INIT_AI_MESSAGE,
+        payload: {
+          id: aiMessageId,
+        },
+      });
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -108,27 +159,8 @@ export default function Home() {
           messages: [...state.messages, nextUserMessage],
         }),
       });
-      const aiMessageId = uuid();
-      dispatch({
-        type: ActionType.UPDATE_AI_MESSAGE,
-        payload: {
-          text: "...",
-          id: aiMessageId,
-        },
-      });
-      for await (let value of it) {
-        try {
-          dispatch({
-            type: ActionType.UPDATE_AI_MESSAGE,
-            payload: {
-              text: value,
-              id: aiMessageId,
-            },
-          });
-        } catch (e: any) {
-          console.warn(e.message, e.stack);
-        }
-      }
+      const message = await response.text();
+      startFakeTextStream(message);
     } catch (e) {
       const error = e as Error;
       dispatch({ type: ActionType.SET_ERROR, payload: error });
@@ -189,7 +221,10 @@ export default function Home() {
           professional background.`}
           </p>
         </div>
-        <div className="w-full flex grow shrink flex-col items-center justify-start overflow-auto">
+        <div
+          ref={scrollBodyRef}
+          className="w-full flex grow shrink flex-col items-center justify-start overflow-auto"
+        >
           {state.messages.map((message, index) => {
             const BOT_STYLES = `bg-sand self-end text-dark`;
             const USER_STYLES = `bg-light-brown text-lite self-start`;
@@ -203,11 +238,7 @@ export default function Home() {
                 {message.text === "..." ? (
                   <Loading size={Loading.Sizes.Small} />
                 ) : (
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: message.text.replace(/\n/g, "<br/>"),
-                    }}
-                  />
+                  <Interweave content={message.text.replace(/\n/g, "<br/>")} />
                 )}
               </div>
             );
@@ -224,10 +255,13 @@ export default function Home() {
           }}
           value={state.draftMessage}
           onSend={() => {
+            if (state.draftMessage.length === 0 || state.isAIGenerating) return;
             handleSendMessage(state.draftMessage);
           }}
           placeholder="Ask me about Justin..."
-          submitDisabled={state.isLoading}
+          submitDisabled={
+            state.isAIGenerating || state.draftMessage.length === 0
+          }
         />
         <div className={`w-[480px] ${state.messages.length ? "hidden" : ""}`}>
           <Spacer height={8} />
