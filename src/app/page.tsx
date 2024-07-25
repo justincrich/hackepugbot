@@ -179,36 +179,34 @@ export default function Home() {
   };
   return (
     <main className="flex min-h-screen flex-col items-center">
-      {state.messages.length ? (
-        <div className="flex flex-row w-full px-8 py-4 title2 justify-between">
-          {"<HackerPug/>"}
-          <div className="flex flex-row gap-3">
-            <Button
-              type={Button.Type.Outline}
-              onClick={() => {
-                if (
-                  typeof document === "undefined" ||
-                  typeof window === "undefined"
-                )
-                  return;
-                window.open("/Justin_Rich_Resume.pdf", "_blank");
-              }}
-              size={Button.Size.Small}
-            >
-              Resume
-            </Button>
-            <Button
-              size={Button.Size.Small}
-              onClick={() => {
-                if (typeof window === "undefined") return;
-                window.open("mailto:justin@hackerpug.com", "mail");
-              }}
-            >
-              Contact
-            </Button>
-          </div>
+      <div className="flex flex-row w-full px-8 py-4 title2 justify-between">
+        {"<HackerPug/>"}
+        <div className="flex flex-row gap-3">
+          <Button
+            type={Button.Type.Outline}
+            onClick={() => {
+              if (
+                typeof document === "undefined" ||
+                typeof window === "undefined"
+              )
+                return;
+              window.open("/Justin_Rich_Resume.pdf", "_blank");
+            }}
+            size={Button.Size.Small}
+          >
+            Resume
+          </Button>
+          <Button
+            size={Button.Size.Small}
+            onClick={() => {
+              if (typeof window === "undefined") return;
+              window.open("mailto:justin@hackerpug.com", "mail");
+            }}
+          >
+            Contact
+          </Button>
         </div>
-      ) : null}
+      </div>
       <div
         className={`p-12 w-full max-w-[480px] min-w-[350px] flex flex-col items-center h-full ${
           state.messages.length ? "w-full max-w-[800px] min-w-[350px]" : ""
