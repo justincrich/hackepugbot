@@ -2,12 +2,22 @@
 import React from "react";
 import { Button } from "./Button";
 import Link from "next/link";
+import { useDeviceType } from "@/hooks/useDeviceType";
 
 export const Header = () => {
+  const { isDesktop } = useDeviceType();
   return (
-    <div className="flex flex-row w-full px-8 py-4 title2 justify-between mb-4">
-      <Link href="/">{"<HackerPug/>"}</Link>
-      <div className="flex flex-row gap-3">
+    <div
+      className={`flex ${
+        isDesktop ? "flex-row" : "flex-col"
+      } w-full px-8 py-4 title2 justify-between mb-4`}
+    >
+      <Link href="/" className={isDesktop ? "" : "mb-4"}>
+        {"<HackerPug/>"}
+      </Link>
+      <div
+        className={`"flex flex-row gap-3" ${isDesktop ? "" : "self-center"}`}
+      >
         <Button
           type={Button.Type.Link}
           onClick={() => {
@@ -20,7 +30,7 @@ export const Header = () => {
           }}
           size={Button.Size.Small}
         >
-          🧑🏻‍💻 About Me
+          {isDesktop ? "🧑🏻‍💻 About Me" : "About"}
         </Button>
         <Button
           type={Button.Type.Link}
@@ -34,7 +44,7 @@ export const Header = () => {
           }}
           size={Button.Size.Small}
         >
-          📄 Resume
+          {isDesktop ? "📄 Resume" : "Resume"}
         </Button>
         <Button
           type={Button.Type.Link}
@@ -44,7 +54,7 @@ export const Header = () => {
             window.open("mailto:justin@hackerpug.com", "mail");
           }}
         >
-          👋 Contact
+          {isDesktop ? "👋 Contact" : "Contact"}
         </Button>
       </div>
     </div>

@@ -179,7 +179,7 @@ export const ChatForm = () => {
   };
 
   return (
-    <div>
+    <div className="px-4">
       <div
         className={`w-full max-w-[480px] ${
           state.messages.length ? "hidden" : ""
