@@ -3,10 +3,12 @@ import React from "react";
 enum ButtonType {
   Default = "Default",
   Outline = "Outline",
+  Link = "Link",
 }
 
 const BUTTON_STYLES: Record<ButtonType, string> = {
   [ButtonType.Default]: "bg-sand text-dark border-0",
+  [ButtonType.Link]: "text-sand border-0 bg-transparent",
   [ButtonType.Outline]: "border-2 border-sand text-lite bg-transparent",
 };
 
@@ -17,9 +19,9 @@ enum ButtonSize {
 }
 
 const BUTTON_SIZES: Record<ButtonSize, string> = {
-  [ButtonSize.Small]: "h-9",
-  [ButtonSize.Regular]: "h-12",
-  [ButtonSize.Large]: "h-10",
+  [ButtonSize.Small]: "h-9 text-base",
+  [ButtonSize.Regular]: "h-12 text-base",
+  [ButtonSize.Large]: "h-10 text-title",
 };
 
 export const Button = ({

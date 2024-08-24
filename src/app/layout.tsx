@@ -21,7 +21,11 @@ export default function RootLayout({
         <title>HackerPug</title>
         <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <main className="flex min-h-screen flex-col items-center">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
