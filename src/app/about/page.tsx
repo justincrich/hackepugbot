@@ -11,7 +11,7 @@ const AboutPage: NextPage = () => {
       <p className="body1 mb-8">
         Here&apos;s a little 🎬 of what I&apos;m about...
       </p>
-      <video className="px-8 w-full rounded" width={600} controls>
+      <video className="px-8 w-full max-w-[900px] rounded" width={600} controls>
         <source src="/about_me.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
