@@ -7,7 +7,7 @@ const AboutPage: NextPage = () => {
   return (
     <div className="w-full h-full flex flex-col items-center">
       <Header />
-      <h1 className="title1 py-4">{`Nice to meet you!`}</h1>
+      <h1 className="title1 py-4">{`Hi 👋 I'm Justin!`}</h1>
       <p className="body1 mb-8">
         Here&apos;s a little 🎬 of what I&apos;m about...
       </p>
