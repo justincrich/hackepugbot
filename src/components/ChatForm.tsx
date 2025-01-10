@@ -40,6 +40,7 @@ enum ActionType {
   SET_ERROR = "SET_ERROR",
   SET_IS_LOADING = "SET_IS_LOADING",
   INIT_AI_MESSAGE = "INIT_AI_MESSAGE",
+  CONCLUDE_AI_MESSAGE = "CONCLUDE_AI_MESSAGE",
   SET_AI_MESSAGE = "SET_AI_MESSAGE",
   SUBMIT_USER_MESSAGE = "SUBMIT_USER_MESSAGE",
   UPDATE_AI_MESSAGE = "UPDATE_AI_MESSAGE",
@@ -58,11 +59,11 @@ type Actions =
   | Action<
       ActionType.UPDATE_AI_MESSAGE,
       {
-        isComplete: boolean;
         text: string;
       }
     >
-  | Action<ActionType.INIT_AI_MESSAGE, { id: string }>;
+  | Action<ActionType.INIT_AI_MESSAGE, { id: string }>
+  | Action<ActionType.CONCLUDE_AI_MESSAGE, { text: string }>;
 
 const baseQuestions = [
   "Where did Justin go to school? 🎓",
@@ -94,6 +95,10 @@ export const ChatForm = () => {
         });
         state.isAIGenerating = true;
         break;
+      case ActionType.CONCLUDE_AI_MESSAGE:
+        state.isAIGenerating = false;
+        state.messages[state.messages.length - 1].text = action.payload.text;
+        return;
       case ActionType.UPDATE_AI_MESSAGE:
         let messageIndex = state.messages.findIndex(
           (message) => message.id === state.activeMessageId
@@ -104,8 +109,7 @@ export const ChatForm = () => {
           isUser: false,
           text: action.payload.text,
         };
-        state.isAIGenerating = !action.payload.isComplete;
-        break;
+        return;
       case ActionType.SET_IS_LOADING:
         state.isLoading = action.payload;
         return;
@@ -121,15 +125,14 @@ export const ChatForm = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedChangeHandler = React.useCallback(
-    debounce((value: string, isComplete: boolean) => {
+    debounce((value: string) => {
       dispatch({
         type: ActionType.UPDATE_AI_MESSAGE,
         payload: {
           text: value,
-          isComplete,
         },
       });
-    }, 300),
+    }, 100),
     []
   );
   const handleSendMessage = async (nextMessage: string) => {
@@ -163,13 +166,12 @@ export const ChatForm = () => {
       let latestValue = "";
       for await (let value of it) {
         latestValue = value;
-        debouncedChangeHandler(latestValue, false);
+        debouncedChangeHandler(latestValue);
       }
       dispatch({
-        type: ActionType.UPDATE_AI_MESSAGE,
+        type: ActionType.CONCLUDE_AI_MESSAGE,
         payload: {
           text: latestValue,
-          isComplete: true,
         },
       });
     } catch (e) {
@@ -177,9 +179,14 @@ export const ChatForm = () => {
       dispatch({ type: ActionType.SET_ERROR, payload: error });
     }
   };
+  console.log("state", state);
 
   return (
-    <div className="px-4">
+    <div
+      className={`flex flex-col px-4 flex-1 ${
+        state.messages.length ? "w-full items-center" : ""
+      }`}
+    >
       <div
         className={`w-full max-w-[480px] ${
           state.messages.length ? "hidden" : ""
@@ -201,44 +208,59 @@ export const ChatForm = () => {
         </p>
       </div>
       <div
-        ref={scrollBodyRef}
-        className="w-full flex flex-col items-center justify-start overflow-auto"
+        className={`px-4 flex-grow flex-shrink-0 flex flex-col relative max-w-[600px] ${
+          state.messages.length ? "h-full w-full" : ""
+        }`}
       >
-        {state.messages.map((message, index) => {
-          const BOT_STYLES = `bg-sand self-end text-dark`;
-          const USER_STYLES = `bg-light-brown text-lite self-start`;
-          return (
-            <div
-              className={`flex shrink flex-col w-full max-w-[400px] rounded p-3 text-wrap ${
-                message.isUser ? USER_STYLES : BOT_STYLES
-              } ${index === 0 ? "" : "mt-6"}`}
-              key={message.text}
-            >
-              {message.text === "..." ? (
-                <Loading size={Loading.Sizes.Small} />
-              ) : (
-                <Interweave content={message.text.replace(/\n/g, "<br/>")} />
-              )}
-            </div>
-          );
-        })}
+        {state.messages.length ? (
+          <div
+            ref={scrollBodyRef}
+            className="absolute inset-0 flex flex-col items-center overflow-y-auto mb-[100px] "
+          >
+            {state.messages.map((message, index) => {
+              const BOT_STYLES = `bg-sand self-end text-dark`;
+              const USER_STYLES = `bg-light-brown text-lite self-start`;
+              return (
+                <div
+                  className={`flex shrink flex-col w-full max-w-[350px] rounded p-3 text-wrap ${
+                    message.isUser ? USER_STYLES : BOT_STYLES
+                  } ${index === 0 ? "" : "mt-6"}`}
+                  key={message.text}
+                >
+                  {message.text === "..." ? (
+                    <Loading size={Loading.Sizes.Small} />
+                  ) : (
+                    <Interweave
+                      content={message.text.replace(/\n/g, "<br/>")}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+        <ChatInput
+          className={`my-8 w-full bottom-0 mt-8 ${
+            state.messages.length ? "absolute" : ""
+          }`}
+          onChange={(nextMessage) => {
+            dispatch({
+              type: ActionType.SET_DRAFT_MESSAGE,
+              payload: nextMessage,
+            });
+          }}
+          value={state.draftMessage}
+          onSend={() => {
+            if (state.draftMessage.length === 0 || state.isAIGenerating) return;
+            handleSendMessage(state.draftMessage);
+          }}
+          placeholder="Ask me about Justin..."
+          submitDisabled={
+            state.isAIGenerating || state.draftMessage.length === 0
+          }
+        />
       </div>
-      <ChatInput
-        className={`my-8 w-full ${state.messages.length ? "mt-auto" : ""}`}
-        onChange={(nextMessage) => {
-          dispatch({
-            type: ActionType.SET_DRAFT_MESSAGE,
-            payload: nextMessage,
-          });
-        }}
-        value={state.draftMessage}
-        onSend={() => {
-          if (state.draftMessage.length === 0 || state.isAIGenerating) return;
-          handleSendMessage(state.draftMessage);
-        }}
-        placeholder="Ask me about Justin..."
-        submitDisabled={state.isAIGenerating || state.draftMessage.length === 0}
-      />
+
       <div
         className={`w-full max-w-[480px] ${
           state.messages.length ? "hidden" : ""

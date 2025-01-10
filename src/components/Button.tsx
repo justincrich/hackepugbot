@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 enum ButtonType {
   Default = "Default",
@@ -30,23 +31,33 @@ export const Button = ({
   children,
   disabled,
   onClick,
+  href,
+  target,
 }: {
   size?: ButtonSize;
   type?: ButtonType;
-  children: string;
+  children: React.ReactNode;
   disabled?: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  href?: string;
+  target?: string;
 }) => {
+  const className = `cursor-pointer body2 font-semibold rounded-3xl ${
+    BUTTON_STYLES[type]
+  } px-4 py-1 ${
+    disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
+  } ${BUTTON_SIZES[size]}`;
+
+  if (href) {
+    return (
+      <Link href={href} target={target} className={className}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <button
-      className={`cursor-pointer body2 font-semibold rounded-3xl ${
-        BUTTON_STYLES[type]
-      } px-4 py-1 ${
-        disabled ? "opacity-50 cursor-not-allowed" : "hover:opacity-80"
-      } ${BUTTON_SIZES[size]}`}
-      onClick={onClick}
-      disabled={disabled}
-    >
+    <button className={className} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );
