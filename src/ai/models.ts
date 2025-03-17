@@ -19,7 +19,7 @@ export const claude3SonnetModelStreamable = new ChatAnthropic({
 
 export const claudeInstantModel = new ChatAnthropic({
   modelName: "claude-instant-1.2",
-  temperature: 0.2,
+  temperature: 0.5,
   clientOptions: {
     apiKey: ANTHROPIC_API_KEY,
   },

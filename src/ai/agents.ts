@@ -41,7 +41,7 @@ export const createAgent = async (): Promise<AgentExecutor> => {
     }
   );
   const agent = await createXmlAgent({
-    llm: claude3SonnetModelStreamable,
+    llm: claudeInstantModel,
     tools,
     prompt,
   });
