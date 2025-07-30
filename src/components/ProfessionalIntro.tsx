@@ -1,9 +1,10 @@
 import React from "react";
+import { Brain, Code2, Building2, Sparkles } from "lucide-react";
 
 export const ProfessionalIntro = () => {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
-      <div className="bg-light-brown rounded-lg shadow-2xl p-8 border border-cream/20">
+      <div className="">
         {/* Main Introduction */}
         <div className="text-center mb-12">
           {/* Hero Image */}
@@ -11,7 +12,7 @@ export const ProfessionalIntro = () => {
             <img
               src="/hero.png"
               alt="Justin Rich - AI Engineering Consultant"
-              className="w-full h-full object-contain rounded-lg"
+              className="object-contain rounded-lg"
             />
           </div>
 
@@ -31,64 +32,74 @@ export const ProfessionalIntro = () => {
         {/* Expertise Section */}
         <div className="mb-12">
           <h3 className="title1 text-sand mb-8 text-center">Core Expertise</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-dark-brown/50 border border-sand/20 p-6 rounded-lg hover:border-sand/40 transition-colors">
-              <h4 className="font-semibold text-sand mb-3">
-                AI Integration & Strategy
-              </h4>
-              <p className="text-lite/80 text-sm">
+          <div className="grid grid-cols-2 md:grid-cols-1 gap-8 max-w-4xl mx-auto">
+            <div className="bg-dark-brown/50 border border-sand/20 p-8 rounded-lg hover:border-sand/40 transition-colors">
+              <div className="flex items-center mb-4">
+                <Brain className="w-8 h-8 text-sand mr-4" strokeWidth={1.5} />
+                <h4 className="font-semibold text-sand text-lg">
+                  AI Integration & Strategy
+                </h4>
+              </div>
+              <p className="text-lite/80 text-sm leading-relaxed">
                 LLM integration, prompt engineering, AI agent workflows, and
-                generative AI evaluation platforms.
+                generative AI evaluation platforms. Transforming complex AI
+                capabilities into seamless user experiences.
               </p>
             </div>
-            <div className="bg-dark-brown/50 border border-cream/20 p-6 rounded-lg hover:border-cream/40 transition-colors">
-              <h4 className="font-semibold text-sand mb-3">React & Next.js</h4>
-              <p className="text-lite/80 text-sm">
+
+            <div className="bg-dark-brown/50 border border-cream/20 p-8 rounded-lg hover:border-cream/40 transition-colors">
+              <div className="flex items-center mb-4">
+                <Code2 className="w-8 h-8 text-cream mr-4" strokeWidth={1.5} />
+                <h4 className="font-semibold text-sand text-lg">
+                  React & Next.js
+                </h4>
+              </div>
+              <p className="text-lite/80 text-sm leading-relaxed">
                 Building scalable, performant web applications with TypeScript,
-                React Native, and modern frameworks.
+                React Native, and modern frameworks. Creating responsive
+                interfaces that users love.
               </p>
             </div>
-            <div className="bg-dark-brown/50 border border-sand/20 p-6 rounded-lg hover:border-sand/40 transition-colors">
-              <h4 className="font-semibold text-sand mb-3">
-                Technical Architecture
-              </h4>
-              <p className="text-lite/80 text-sm">
+
+            <div className="bg-dark-brown/50 border border-sand/20 p-8 rounded-lg hover:border-sand/40 transition-colors">
+              <div className="flex items-center mb-4">
+                <Building2
+                  className="w-8 h-8 text-sand mr-4"
+                  strokeWidth={1.5}
+                />
+                <h4 className="font-semibold text-sand text-lg">
+                  Technical Architecture
+                </h4>
+              </div>
+              <p className="text-lite/80 text-sm leading-relaxed">
                 Full-stack architecture design, GraphQL APIs, vector databases,
-                and AI-powered backend systems.
+                and AI-powered backend systems. Building robust foundations for
+                scalable applications.
               </p>
             </div>
-            <div className="bg-dark-brown/50 border border-cream/20 p-6 rounded-lg hover:border-cream/40 transition-colors">
-              <h4 className="font-semibold text-sand mb-3">AI-Powered UX</h4>
-              <p className="text-lite/80 text-sm">
+
+            <div className="bg-dark-brown/50 border border-cream/20 p-8 rounded-lg hover:border-cream/40 transition-colors">
+              <div className="flex items-center mb-4">
+                <Sparkles
+                  className="w-8 h-8 text-cream mr-4"
+                  strokeWidth={1.5}
+                />
+                <h4 className="font-semibold text-sand text-lg">
+                  AI-Powered UX
+                </h4>
+              </div>
+              <p className="text-lite/80 text-sm leading-relaxed">
                 Conversational interfaces, AI debugging tools, and intelligent
-                dashboards for complex workflows.
-              </p>
-            </div>
-            <div className="bg-dark-brown/50 border border-sand/20 p-6 rounded-lg hover:border-sand/40 transition-colors">
-              <h4 className="font-semibold text-sand mb-3">
-                Performance & Compliance
-              </h4>
-              <p className="text-lite/80 text-sm">
-                Enterprise-grade optimization, regulatory compliance systems,
-                and financial-grade AI applications.
-              </p>
-            </div>
-            <div className="bg-dark-brown/50 border border-cream/20 p-6 rounded-lg hover:border-cream/40 transition-colors">
-              <h4 className="font-semibold text-sand mb-3">
-                Founding & Leadership
-              </h4>
-              <p className="text-lite/80 text-sm">
-                Technical co-founding, team leadership, and strategic consulting
-                for AI-first companies.
+                dashboards for complex workflows. Making AI accessible and
+                delightful for end users.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Recent Engagements */}
         <div className="mb-12">
           <h3 className="title1 text-sand mb-8 text-center">
-            Recent Client Engagements
+            Client Engagements
           </h3>
           <div className="space-y-8">
             <div className="border-l-4 border-sand pl-6 bg-dark-brown/30 p-4 rounded-r-lg">
