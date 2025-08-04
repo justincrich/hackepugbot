@@ -12,8 +12,8 @@ export const SocialProofSection = () => {
         <div className="bg-light-brown p-8 rounded-lg border border-cream/20">
           <div className="text-4xl mb-4">⚡</div>
           <blockquote className="text-lg text-cream mb-4 italic">
-            "Reduced our AI model evaluation time by 60% while improving
-            accuracy metrics across our entire platform."
+            &quot;Reduced our AI model evaluation time by 60% while improving
+            accuracy metrics across our entire platform.&quot;
           </blockquote>
           <div className="text-sand font-semibold">Technical Director</div>
           <div className="text-cream text-sm">AI-First Startup</div>
@@ -23,8 +23,8 @@ export const SocialProofSection = () => {
         <div className="bg-light-brown p-8 rounded-lg border border-cream/20">
           <div className="text-4xl mb-4">🚀</div>
           <blockquote className="text-lg text-cream mb-4 italic">
-            "Justin delivered a production-ready AI content system that now
-            serves over 100,000 users daily."
+            &quot;Justin delivered a production-ready AI content system that now
+            serves over 100,000 users daily.&quot;
           </blockquote>
           <div className="text-sand font-semibold">VP of Engineering</div>
           <div className="text-cream text-sm">Mid-Stage Company</div>

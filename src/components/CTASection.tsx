@@ -12,8 +12,8 @@ export const CTASection = () => {
       </h2>
 
       <p className="text-xl text-cream mb-12 max-w-2xl mx-auto leading-relaxed">
-        Let's discuss how I can help you build production-ready AI systems that
-        serve millions of users.
+        Let&apos;s discuss how I can help you build production-ready AI systems
+        that serve millions of users.
       </p>
 
       {/* Two CTA paths */}

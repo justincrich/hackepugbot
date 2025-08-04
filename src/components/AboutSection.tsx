@@ -22,10 +22,10 @@ export const AboutSection = () => {
         {/* About content */}
         <div>
           <p className="text-lg text-cream mb-6 leading-relaxed">
-            I'm Justin Rich, a full-stack engineer with 7+ years building AI
-            infrastructure that scales. As Technical Co-Founder of Formulist,
-            I've helped companies from startups to enterprises ship AI products
-            that serve millions of users.
+            I&apos;m Justin Rich, a full-stack engineer with 7+ years building
+            AI infrastructure that scales. As Technical Co-Founder of Formulist,
+            I&apos;ve helped companies from startups to enterprises ship AI
+            products that serve millions of users.
           </p>
 
           <p className="text-lg text-cream mb-8 leading-relaxed">
