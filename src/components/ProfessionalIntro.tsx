@@ -102,6 +102,33 @@ export const ProfessionalIntro = () => {
             Client Engagements
           </h3>
           <div className="space-y-8">
+            <div className="border-l-4 border-cream pl-6 bg-dark-brown/30 p-4 rounded-r-lg">
+              <h4 className="text-xl font-semibold text-sand mb-2">
+                Enter Health - Healthcare AI Desktop Application
+              </h4>
+              <p className="text-sm text-cream/80 mb-3">August 2025</p>
+              <p className="text-lite/90 mb-3">
+                Architected HIPAA-compliant Electron AI assistant using
+                TypeScript, React, and multi-agent frameworks. Built
+                cross-platform desktop application with glassmorphism UI and
+                real-time AI workflows using OpenAI Vision API.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1 bg-cream/20 text-cream text-sm rounded-full border border-cream/30">
+                  Electron
+                </span>
+                <span className="px-3 py-1 bg-cream/20 text-cream text-sm rounded-full border border-cream/30">
+                  Multi-Agent Engineering
+                </span>
+                <span className="px-3 py-1 bg-cream/20 text-cream text-sm rounded-full border border-cream/30">
+                  OpenAI Vision
+                </span>
+                <span className="px-3 py-1 bg-cream/20 text-cream text-sm rounded-full border border-cream/30">
+                  Context Engineering
+                </span>
+              </div>
+            </div>
+
             <div className="border-l-4 border-sand pl-6 bg-dark-brown/30 p-4 rounded-r-lg">
               <h4 className="text-xl font-semibold text-sand mb-2">
                 Galileo AI
