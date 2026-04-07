@@ -15,6 +15,11 @@ export const Header = () => {
             About
           </Button>
         </Link>
+        <Link href="/projects">
+          <Button type={Button.Type.Link} size={Button.Size.Small}>
+            Projects
+          </Button>
+        </Link>
         <Link href="https://hackerpug.ghost.io/" target="_blank">
           <Button type={Button.Type.Link} size={Button.Size.Small}>
             Blog
@@ -37,6 +42,11 @@ export const Header = () => {
         <Link href="/about">
           <Button type={Button.Type.Link} size={Button.Size.Small}>
             🧑🏻‍💻 About Me
+          </Button>
+        </Link>
+        <Link href="/projects">
+          <Button type={Button.Type.Link} size={Button.Size.Small}>
+            🛠️ Projects
           </Button>
         </Link>
         <Link href="https://hackerpug.ghost.io/" target="_blank">
